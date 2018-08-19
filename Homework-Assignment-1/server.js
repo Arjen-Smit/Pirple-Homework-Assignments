@@ -6,6 +6,7 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const router = require('./router');
 const handlers = require('./handlers');
+const util = require('./util');
 
 const server = (req, res) => {
 
@@ -23,10 +24,9 @@ const server = (req, res) => {
     req.on('end', () => {
         buffer += decoder.end();
 
-        const parsedBuffer = JSON.parse(buffer);
-
+        // Create data object with the payload from the request if it's valid json
         const data = {
-            payload: parsedBuffer,
+            payload: util.isValidJSON(buffer) ? JSON.parse(buffer) : {},
         };
 
         const routedHandler = router.hasOwnProperty(path) ? router[path] : handlers.unknown;
