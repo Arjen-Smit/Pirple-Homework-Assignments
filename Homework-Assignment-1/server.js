@@ -10,17 +10,22 @@ const util = require('./util');
 
 const server = (req, res) => {
 
-    const parsedUrl = url.parse(req.url, true);
+    // parse Url (not parsing the queryString since it won't be used
+    const parsedUrl = url.parse(req.url);
 
+    // Parse the request path leaving the leading slash. This makes it a absolute path (personal preference).
     const path = parsedUrl.pathname.replace(/\/+$/g, '');
 
+    // Starting a decoder to handle the incomming json from the request.
     const decoder = new stringDecoder('utf-8');
     let buffer = '';
 
+    // Add data to buffer.
     req.on('data', (data) => {
         buffer += decoder.write(data);
     });
 
+    // Finish adding data to buffer.
     req.on('end', () => {
         buffer += decoder.end();
 
@@ -29,10 +34,11 @@ const server = (req, res) => {
             payload: util.isValidJSON(buffer) ? JSON.parse(buffer) : {},
         };
 
+        // Select handler by given route.
         const routedHandler = router.hasOwnProperty(path) ? router[path] : handlers.unknown;
 
+        // Run Handler
         routedHandler(data, (statusCode, payload) => {
-
             statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
             payload = typeof(payload) === 'object' ? payload : {};
 
