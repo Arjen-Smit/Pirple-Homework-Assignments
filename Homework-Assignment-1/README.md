@@ -9,10 +9,11 @@ Please create a simple "Hello World" API. Meaning:
 This application is written in ES6 and should run on nodejs 8 
 
 Implement a single route /hello that replies by saying Hi and asking for someones name.
-If the name is send to hello by means the following payload it says hi and tells his own name.
+
+if the name is added by means of json in the body of the request the application will use that to reply and tell his own name.
 ```
 {
-    name: 'my Name'
+    name: 'Arjen'
 }
 ```
-If no route or any other route it given it will return another message.
+Any other request will return a message asking for a hello.
