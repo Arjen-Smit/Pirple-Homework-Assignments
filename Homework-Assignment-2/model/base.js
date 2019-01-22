@@ -5,8 +5,7 @@ class Base {
 
     constructor() {
         this._id = null;
-        console.log(this.constructor.name);
-        console.log(_data.baseDir);
+        this._saved = false;
     }
 
     save() {
@@ -20,9 +19,15 @@ class Base {
             dataObject[realKey] = this[realKey];
         });
 
-        _data.create(this.constructor.name, this.id, dataObject, (err) => {
-            console.log(err);
-        });
+        dataObject['saved'] = true;
+        if (this._saved) {
+            _data.update(this.constructor.name, this.id, dataObject, (err) => {
+            });
+        } else {
+            _data.create(this.constructor.name, this.id, dataObject, (err) => {
+                this.saved = true;
+            });
+        }
     }
 
     load(id) {
@@ -35,6 +40,14 @@ class Base {
 
     set id(value) {
         this._id = value;
+    }
+
+    get saved() {
+        return this._saved;
+    }
+
+    set saved(value) {
+        this._saved = value;
     }
 }
 
